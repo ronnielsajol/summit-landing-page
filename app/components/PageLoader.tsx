@@ -75,18 +75,22 @@ export default function PageLoader({ onComplete }: PageLoaderProps) {
 	return (
 		<>
 			{/* Fade overlay that sits on top of content */}
-			<div ref={overlayRef} className='fixed inset-0 z-[9998] pointer-events-none' style={{ background: "var(--ivory)" }} />
+			<div
+				ref={overlayRef}
+				className='fixed inset-0 z-[9998] pointer-events-none'
+				style={{ background: "var(--royal-blue-deep)" }}
+			/>
 			{/* Main loader panel */}
 			<div
 				ref={loaderRef}
 				className='fixed inset-0 z-[9999] flex flex-col items-center justify-center'
-				style={{ background: "var(--royal-blue-deep)" }}>
+				style={{ background: "var(--ivory)" }}>
 				{/* Subtle mesh */}
 				<div
 					className='absolute inset-0 pointer-events-none'
 					style={{
 						background:
-							"radial-gradient(ellipse 70% 60% at 30% 40%, rgba(201,168,76,0.08) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 70% 60%, rgba(255,255,255,0.04) 0%, transparent 55%)",
+							"radial-gradient(ellipse 70% 60% at 30% 40%, rgba(201,168,76,0.12) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 70% 60%, rgba(27,58,107,0.05) 0%, transparent 55%)",
 					}}
 				/>
 
@@ -95,8 +99,8 @@ export default function PageLoader({ onComplete }: PageLoaderProps) {
 					<div
 						className='rounded-full border px-4 py-1 text-xs tracking-[0.3em] uppercase mb-2'
 						style={{
-							borderColor: "rgba(201,168,76,0.4)",
-							color: "var(--gold-light)",
+							borderColor: "rgba(201,168,76,0.6)",
+							color: "var(--gold-warm)",
 							fontFamily: "var(--font-body)",
 						}}>
 						2026
@@ -111,7 +115,7 @@ export default function PageLoader({ onComplete }: PageLoaderProps) {
 							fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
 							fontWeight: 600,
 							lineHeight: 1,
-							color: "white",
+							color: "var(--royal-blue-deep)",
 							letterSpacing: "-0.01em",
 						}}>
 						{titleChars}
@@ -129,7 +133,8 @@ export default function PageLoader({ onComplete }: PageLoaderProps) {
 						ref={subtitleRef}
 						className='text-sm tracking-[0.25em] uppercase'
 						style={{
-							color: "rgba(255,255,255,0.55)",
+							color: "var(--royal-blue)",
+							opacity: 0.7,
 							fontFamily: "var(--font-body)",
 						}}>
 						Cebu Pastoral &amp; Ministerial Association

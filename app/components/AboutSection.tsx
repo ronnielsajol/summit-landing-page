@@ -21,7 +21,7 @@ export default function AboutSection() {
 				const tl = gsap.timeline({
 					scrollTrigger: {
 						trigger: sectionRef.current,
-						start: "top 75%",
+						start: "top 95%",
 						toggleActions: "play none none none",
 					},
 					defaults: { ease: "power3.out" },

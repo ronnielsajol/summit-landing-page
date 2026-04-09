@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -29,6 +30,9 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 			const mm = gsap.matchMedia();
 
 			mm.add("(prefers-reduced-motion: no-preference)", () => {
+				// Pre-hide so they never flash before their tween runs
+				gsap.set(ctaRef.current, { autoAlpha: 0, y: 24 });
+
 				const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
 				tlRef.current = tl;
 
@@ -42,12 +46,12 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 					)
 					.from(subtitleRef.current, { opacity: 0, y: 20, duration: 0.7 }, "-=0.4")
 					.from(metaRef.current?.children ?? [], { opacity: 0, y: 20, stagger: 0.1, duration: 0.6 }, "-=0.4")
-					.from(ctaRef.current?.children ?? [], { opacity: 0, y: 20, stagger: 0.12, duration: 0.6 }, "-=0.3")
+					.to(ctaRef.current, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, "-=0.3")
 					.from(scrollHintRef.current, { opacity: 0, duration: 0.8 }, "-=0.2");
 
 				// Subtle background parallax
 				mm.add("(min-width: 768px)", () => {
-					gsap.to(bgRef.current, {
+					gsap.to(contentRef.current, {
 						yPercent: 20,
 						ease: "none",
 						scrollTrigger: {
@@ -80,11 +84,14 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 	}, [loaded]);
 
 	return (
-		<section ref={sectionRef} id='hero' className='relative min-h-screen flex flex-col items-center justify-center'>
+		<section
+			ref={sectionRef}
+			id='hero'
+			className='relative min-h-screen flex flex-col items-center justify-center overflow-hidden'>
 			{/* Layered background */}
 			<div
 				ref={bgRef}
-				className='absolute inset-0'
+				className='absolute inset-x-0 -top-[15%] -bottom-[15%]'
 				style={{
 					background: "linear-gradient(160deg, var(--royal-blue-deep) 0%, var(--royal-blue) 50%, #1d4a7a 100%)",
 				}}>
@@ -140,7 +147,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 			{/* Content */}
 			<div
 				ref={contentRef}
-				className='relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto pt-12 pb-12'
+				className='relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto pt-24 pb-12 '
 				style={{ opacity: 0 }}>
 				{/* Tagline */}
 				<div ref={taglineRef} className='flex items-center gap-3 mb-8'>
@@ -243,7 +250,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 				</div>
 
 				{/* CTAs */}
-				<div ref={ctaRef} className='flex flex-wrap justify-center gap-4'>
+				<div ref={ctaRef} className='flex justify-center flex-wrap gap-4'>
 					<a
 						href='#cta'
 						onClick={(e) => {
