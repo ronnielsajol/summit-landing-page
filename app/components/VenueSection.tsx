@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Building2, Church, MapPin, CalendarDays } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,22 +89,22 @@ export default function VenueSection() {
 								{
 									label: "Venue Name",
 									value: "Nissi Academy International",
-									icon: "🏛️",
+									icon: <Building2 size={18} />,
 								},
 								{
 									label: "Church",
 									value: "Christ Faith Fellowship",
-									icon: "✝️",
+									icon: <Church size={18} />,
 								},
 								{
 									label: "City",
 									value: "Lapu-Lapu City, Cebu, Philippines",
-									icon: "📍",
+									icon: <MapPin size={18} />,
 								},
 								{
 									label: "Date",
 									value: "Friday, April 17, 2026",
-									icon: "📅",
+									icon: <CalendarDays size={18} />,
 								},
 							].map((item) => (
 								<div
@@ -113,7 +114,9 @@ export default function VenueSection() {
 										background: "white",
 										border: "1px solid var(--border)",
 									}}>
-									<span className='text-lg mt-0.5 shrink-0'>{item.icon}</span>
+									<span className='flex shrink-0 mt-0.5' style={{ color: "var(--royal-blue)" }}>
+										{item.icon}
+									</span>
 									<div>
 										<div
 											className='text-xs tracking-[0.15em] uppercase mb-0.5'

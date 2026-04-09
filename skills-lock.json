@@ -21,10 +21,20 @@
       "sourceType": "github",
       "computedHash": "9fa6e640b4d702d2270b28f43b37eb50bcdcd562b6b88b27260cf8ce5831d74f"
     },
+    "gsap-master": {
+      "source": "su69ar/rdnax-gsap-master",
+      "sourceType": "github",
+      "computedHash": "2e6b296d7cfa4a5353d5b9ed5d6c23046116905cee0ffd5ecc313dab27e3c374"
+    },
     "gsap-timeline": {
       "source": "greensock/gsap-skills",
       "sourceType": "github",
       "computedHash": "e7c07909bb427f74e1bda1ff716bd97ae166269382f7abbd649c0d1ba8f6e0ec"
+    },
+    "gsap-utils": {
+      "source": "greensock/gsap-skills",
+      "sourceType": "github",
+      "computedHash": "72af4a036d417d6eaef7478eca2f28e760631fb78db822ba34a9c706797aab62"
     }
   }
 }

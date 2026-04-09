@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -113,17 +114,23 @@ export default function CTASection() {
 
 					{/* Event chips */}
 					<div className='flex flex-wrap justify-center gap-3 mb-10'>
-						{["📅 April 17, 2026", "🕙 10:00 AM", "📍 Lapu-Lapu City, Cebu", "👥 1,000+ Leaders"].map((chip) => (
+						{[
+							{ icon: <CalendarDays className='text-white/70' size={12} />, label: "April 17, 2026" },
+							{ icon: <Clock className='text-white/70' size={12} />, label: "10:00 AM" },
+							{ icon: <MapPin className='text-white/70' size={12} />, label: "Lapu-Lapu City, Cebu" },
+							{ icon: <Users className='text-white/70' size={12} />, label: "1,000+ Leaders" },
+						].map((chip) => (
 							<div
-								key={chip}
-								className='text-xs px-4 py-2 rounded-full'
+								key={chip.label}
+								className='flex items-center gap-1.5 text-xs px-4 py-2 rounded-full'
 								style={{
 									background: "rgba(255,255,255,0.08)",
 									border: "1px solid rgba(255,255,255,0.15)",
 									color: "rgba(255,255,255,0.7)",
 									fontFamily: "var(--font-body)",
 								}}>
-								{chip}
+								{chip.icon}
+								{chip.label}
 							</div>
 						))}
 					</div>

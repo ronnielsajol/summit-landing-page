@@ -42,15 +42,17 @@ export default function AboutSection() {
 					);
 
 				// Pillars: each card animates independently when they enter the viewport
-				gsap.from(pillarsRef.current?.children ?? [], {
-					opacity: 0,
-					y: 30,
+				const pillarsChildren = pillarsRef.current ? Array.from(pillarsRef.current.children) : [];
+				gsap.set(pillarsChildren, { opacity: 0, y: 30 });
+				gsap.to(pillarsChildren, {
+					opacity: 1,
+					y: 0,
 					stagger: 0.12,
 					duration: 0.8,
 					ease: "power3.out",
 					scrollTrigger: {
 						trigger: pillarsRef.current,
-						start: "top 88%",
+						start: "top 85%",
 					},
 				});
 
@@ -187,35 +189,46 @@ export default function AboutSection() {
 				</div>
 
 				{/* Four pillars */}
-				<div ref={pillarsRef} className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16'>
+				<div ref={pillarsRef} className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16'>
 					{pillars.map((p) => (
 						<div
 							key={p.title}
-							className='summit-card group p-6 cursor-default transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'
+							className='relative cursor-default transition-transform duration-300 hover:-translate-y-1'
 							style={{
-								borderTop: "3px solid var(--gold)",
+								filter: "drop-shadow(0 2px 16px rgba(27,58,107,0.07))",
 							}}>
+							{/* Card with inverted top-left notch */}
 							<div
-								className='mb-4 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300'
+								className='summit-card h-full pt-14 px-5 pb-6'
 								style={{
-									background: "var(--royal-blue-mist)",
-									color: "var(--royal-blue)",
+									borderRadius: 0,
+									boxShadow: "none",
+									clipPath: "path('M 39,0 L 9999,0 L 9999,9999 L 0,9999 L 0,39 A 32,32 0 0 0 39,0 Z')",
+								}}>
+								<h3
+									className='mb-2'
+									style={{
+										fontFamily: "var(--font-display)",
+										fontSize: "1.25rem",
+										fontWeight: 600,
+										color: "var(--royal-blue-deep)",
+									}}>
+									{p.title}
+								</h3>
+								<p className='text-sm leading-relaxed' style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}>
+									{p.description}
+								</p>
+							</div>
+
+							{/* Icon anchored in the notch void */}
+							<div
+								className='absolute -top-4 -left-4 w-12 h-12 flex items-center justify-center rounded-full'
+								style={{
+									backgroundColor: "var(--gold-warm)",
+									color: "var(--gold-light)",
 								}}>
 								{p.icon}
 							</div>
-							<h3
-								className='mb-2'
-								style={{
-									fontFamily: "var(--font-display)",
-									fontSize: "1.25rem",
-									fontWeight: 600,
-									color: "var(--royal-blue-deep)",
-								}}>
-								{p.title}
-							</h3>
-							<p className='text-sm leading-relaxed' style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-								{p.description}
-							</p>
 						</div>
 					))}
 				</div>

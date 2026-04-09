@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { CalendarDays, Clock, MapPin } from "lucide-react";
 
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -52,7 +53,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 				// Subtle background parallax
 				mm.add("(min-width: 768px)", () => {
 					gsap.to(contentRef.current, {
-						yPercent: 20,
+						yPercent: 5,
 						ease: "none",
 						scrollTrigger: {
 							trigger: sectionRef.current,
@@ -122,7 +123,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 			{/* Decorative arc lines */}
 			<div className='absolute inset-0 pointer-events-none overflow-hidden'>
 				<svg
-					className='absolute top-0 right-0 opacity-[0.06]'
+					className='absolute top-0 right-0 opacity-[0.4]'
 					width='600'
 					height='600'
 					viewBox='0 0 600 600'
@@ -133,7 +134,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 					<circle cx='500' cy='100' r='450' stroke='#C9A84C' strokeWidth='0.3' />
 				</svg>
 				<svg
-					className='absolute bottom-20 left-0 opacity-[0.05]'
+					className='absolute bottom-0 left-0 opacity-[0.1]'
 					width='400'
 					height='400'
 					viewBox='0 0 400 400'
@@ -221,32 +222,59 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 					<span style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.9em" }}>Bishop Noel Centino</span>
 				</p>
 
-				{/* Meta info pills */}
-				<div ref={metaRef} className='flex flex-wrap justify-center gap-3 mb-6'>
-					{[
-						{ icon: "📅", label: "April 17, 2026", sub: "Friday" },
-						{ icon: "🕙", label: "10:00 AM – 2:00 PM", sub: "Program" },
-						{ icon: "📍", label: "Lapu-Lapu City, Cebu", sub: "Nissi Academy" },
-					].map((item) => (
-						<div
-							key={item.label}
-							className='flex items-center gap-2.5 rounded-full px-4 py-2.5'
-							style={{
-								background: "rgba(255,255,255,0.08)",
-								border: "1px solid rgba(255,255,255,0.15)",
-								backdropFilter: "blur(8px)",
-							}}>
-							<span className='text-sm'>{item.icon}</span>
-							<div className='text-left'>
-								<div className='text-sm font-medium leading-none' style={{ color: "white", fontFamily: "var(--font-body)" }}>
-									{item.label}
+				{/* Meta info */}
+				<div ref={metaRef} className='mb-6 w-full'>
+					{/* Mobile: stacked icon + text, no pills */}
+					<div className='flex sm:hidden items-start justify-center gap-5'>
+						{[
+							{ icon: <CalendarDays size={18} />, label: "April 17, 2026", sub: "Friday" },
+							{ icon: <Clock size={18} />, label: "10:00 AM – 2:00 PM", sub: "Program" },
+							{ icon: <MapPin size={18} />, label: "Nissi Academy", sub: "Lapu-Lapu City" },
+						].map((item, i, arr) => (
+							<div key={item.label} className='flex items-start gap-5'>
+								<div className='flex flex-col items-center gap-1.5'>
+									<span style={{ color: "var(--gold-light)" }}>{item.icon}</span>
+									<span
+										className='text-xs font-medium text-center leading-tight'
+										style={{ color: "white", fontFamily: "var(--font-body)" }}>
+										{item.label}
+									</span>
+									<span className='text-[10px] text-center' style={{ color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)" }}>
+										{item.sub}
+									</span>
 								</div>
-								<div className='text-xs mt-0.5' style={{ color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)" }}>
-									{item.sub}
+								{i < arr.length - 1 && <div className='w-px self-stretch mt-1' style={{ background: "rgba(201,168,76,0.2)" }} />}
+							</div>
+						))}
+					</div>
+
+					{/* Desktop: pills */}
+					<div className='hidden sm:flex flex-wrap justify-center gap-3'>
+						{[
+							{ icon: <CalendarDays className='text-white/70' size={14} />, label: "April 17, 2026", sub: "Friday" },
+							{ icon: <Clock className='text-white/70' size={14} />, label: "10:00 AM – 2:00 PM", sub: "Program" },
+							{ icon: <MapPin className='text-white/70' size={14} />, label: "Lapu-Lapu City, Cebu", sub: "Nissi Academy" },
+						].map((item) => (
+							<div
+								key={item.label}
+								className='flex items-center gap-2.5 rounded-full px-4 py-2.5'
+								style={{
+									background: "rgba(255,255,255,0.08)",
+									border: "1px solid rgba(255,255,255,0.15)",
+									backdropFilter: "blur(8px)",
+								}}>
+								<span className='flex shrink-0'>{item.icon}</span>
+								<div className='text-left'>
+									<div className='text-sm font-medium leading-none' style={{ color: "white", fontFamily: "var(--font-body)" }}>
+										{item.label}
+									</div>
+									<div className='text-xs mt-0.5' style={{ color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-body)" }}>
+										{item.sub}
+									</div>
 								</div>
 							</div>
-						</div>
-					))}
+						))}
+					</div>
 				</div>
 
 				{/* CTAs */}

@@ -1,4 +1,5 @@
 "use client";
+import { Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -223,8 +224,8 @@ export default function EventDetailsSection() {
 						style={{ background: "var(--royal-blue-deep)" }}>
 						<div
 							className='w-14 h-14 rounded-full shrink-0 flex items-center justify-center'
-							style={{ background: "rgba(201,168,76,0.15)", color: "var(--gold-light)", fontSize: "1.5rem" }}>
-							✦
+							style={{ background: "rgba(201,168,76,0.15)", color: "var(--gold-light)" }}>
+							<Sparkles size={24} />
 						</div>
 						<div className='flex-1'>
 							<div
