@@ -28,6 +28,7 @@ export function RegisterForm({ onSuccess }: Props) {
 	const [selectedRegionCode, setSelectedRegionCode] = useState("");
 	const [selectedMunicipalityCode, setSelectedMunicipalityCode] = useState("");
 	const [selectedCityCode, setSelectedCityCode] = useState("");
+	const [selectedLocalityValue, setSelectedLocalityValue] = useState("");
 	const [selectedBarangayCode, setSelectedBarangayCode] = useState("");
 	const [loadingRegions, setLoadingRegions] = useState(true);
 	const [loadingLocalities, setLoadingLocalities] = useState(false);
@@ -99,7 +100,7 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.municipality) body.append("municipality", value.municipality);
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
-				const res = await fetch(`${apiUrl}/pre-register/7`, {
+				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
 					method: "POST",
 					headers: { Accept: "application/json" },
 					body,
@@ -492,6 +493,7 @@ export function RegisterForm({ onSuccess }: Props) {
 												setSelectedRegionCode(e.target.value);
 												setSelectedMunicipalityCode("");
 												setSelectedCityCode("");
+												setSelectedLocalityValue("");
 												setSelectedBarangayCode("");
 												form.setFieldValue("municipality", "");
 												form.setFieldValue("city", "");
@@ -514,80 +516,74 @@ export function RegisterForm({ onSuccess }: Props) {
 							</form.Field>
 						</div>
 
-						{/* Municipality + City */}
-						<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3'>
-							<form.Field name='municipality'>
-								{(field) => (
-									<div>
-										<label
-											htmlFor={field.name}
-											className='block text-xs font-medium mb-1'
-											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
-											Municipality
-										</label>
-										<select
-											id={field.name}
-											name={field.name}
-											value={selectedMunicipalityCode}
-											disabled={!selectedRegionCode || loadingLocalities}
-											onBlur={field.handleBlur}
-											onChange={(e) => {
-												const item = municipalities.find((m) => m.code === e.target.value);
-												field.handleChange(item?.name ?? "");
-												setSelectedMunicipalityCode(e.target.value);
-												setSelectedCityCode("");
-												setSelectedBarangayCode("");
-												form.setFieldValue("city", "");
-												form.setFieldValue("barangay", "");
-												if (e.target.value) loadBarangays(e.target.value, "municipalities");
-											}}
-											style={selectStyle}>
-											<option value=''>
-												{!selectedRegionCode ? "Select region first" : loadingLocalities ? "Loading…" : "Select municipality"}
-											</option>
-											{municipalities.map((m) => (
-												<option key={m.code} value={m.code}>
-													{m.name}
-												</option>
-											))}
-										</select>
-										<FieldError errors={field.state.meta.errors} />
-									</div>
-								)}
-							</form.Field>
-
+						{/* Municipality / City (combined) */}
+						<div className='mb-3'>
 							<form.Field name='city'>
 								{(field) => (
 									<div>
 										<label
-											htmlFor={field.name}
+											htmlFor='locality-select'
 											className='block text-xs font-medium mb-1'
 											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
-											City
+											Municipality / City
 										</label>
 										<select
-											id={field.name}
-											name={field.name}
-											value={selectedCityCode}
+											id='locality-select'
+											value={selectedLocalityValue}
 											disabled={!selectedRegionCode || loadingLocalities}
 											onBlur={field.handleBlur}
 											onChange={(e) => {
-												const item = cities.find((c) => c.code === e.target.value);
-												field.handleChange(item?.name ?? "");
-												setSelectedCityCode(e.target.value);
-												setSelectedMunicipalityCode("");
+												const val = e.target.value;
+												setSelectedLocalityValue(val);
 												setSelectedBarangayCode("");
-												form.setFieldValue("municipality", "");
 												form.setFieldValue("barangay", "");
-												if (e.target.value) loadBarangays(e.target.value, "cities");
+												setBarangays([]);
+												if (!val) {
+													field.handleChange("");
+													form.setFieldValue("municipality", "");
+													setSelectedCityCode("");
+													setSelectedMunicipalityCode("");
+													return;
+												}
+												const [type, code] = val.split(":");
+												if (type === "city") {
+													const item = cities.find((c) => c.code === code);
+													field.handleChange(item?.name ?? "");
+													form.setFieldValue("municipality", "");
+													setSelectedCityCode(code);
+													setSelectedMunicipalityCode("");
+													loadBarangays(code, "cities");
+												} else {
+													const item = municipalities.find((m) => m.code === code);
+													form.setFieldValue("municipality", item?.name ?? "");
+													field.handleChange("");
+													setSelectedMunicipalityCode(code);
+													setSelectedCityCode("");
+													loadBarangays(code, "municipalities");
+												}
 											}}
 											style={selectStyle}>
-											<option value=''>{!selectedRegionCode ? "Select region first" : loadingLocalities ? "Loading…" : "Select city"}</option>
-											{cities.map((c) => (
-												<option key={c.code} value={c.code}>
-													{c.name}
-												</option>
-											))}
+											<option value=''>
+												{!selectedRegionCode ? "Select region first" : loadingLocalities ? "Loading…" : "Select municipality or city"}
+											</option>
+											{cities.length > 0 && (
+												<optgroup label='Cities'>
+													{cities.map((c) => (
+														<option key={c.code} value={`city:${c.code}`}>
+															{c.name}
+														</option>
+													))}
+												</optgroup>
+											)}
+											{municipalities.length > 0 && (
+												<optgroup label='Municipalities'>
+													{municipalities.map((m) => (
+														<option key={m.code} value={`mun:${m.code}`}>
+															{m.name}
+														</option>
+													))}
+												</optgroup>
+											)}
 										</select>
 										<FieldError errors={field.state.meta.errors} />
 									</div>
