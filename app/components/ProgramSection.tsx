@@ -38,7 +38,7 @@ const schedule = [
 	{
 		time: "1:00 PM",
 		period: "Keynote",
-		title: "ASC Address",
+		title: "Sen. Alan Peter S. Cayetano Address",
 		description: "The guest of honor delivers the keynote message — a defining moment of the summit.",
 		highlight: true,
 		badge: "Keynote",

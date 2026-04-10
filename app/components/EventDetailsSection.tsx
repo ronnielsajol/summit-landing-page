@@ -256,7 +256,7 @@ export default function EventDetailsSection() {
 									color: "white",
 									letterSpacing: "-0.01em",
 								}}>
-								ASC
+								Senator Brother Alan Peter S. Cayetano
 							</h3>
 							<p className='text-sm' style={{ color: "rgba(255,255,255,0.55)", fontFamily: "var(--font-body)", lineHeight: 1.6 }}>
 								Joining the pastors and ministry leaders of CPMA as the honored guest and keynote speaker — a special presence at this

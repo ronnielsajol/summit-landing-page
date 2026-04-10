@@ -187,6 +187,7 @@ export default function SpeakerSection() {
 							Featured Speaker
 						</div>
 
+						<h3 className='mb-2 text-3xl font-display font-medium'>Senator Brother</h3>
 						<h2
 							className='mb-2'
 							style={{
@@ -197,7 +198,7 @@ export default function SpeakerSection() {
 								color: "var(--royal-blue-deep)",
 								letterSpacing: "-0.02em",
 							}}>
-							ASC
+							Alan Peter S. Cayetano
 						</h2>
 
 						<div className='flex items-center gap-3 mb-6' style={{ color: "var(--muted)" }}>
@@ -215,8 +216,8 @@ export default function SpeakerSection() {
 								color: "var(--slate)",
 								lineHeight: 1.8,
 							}}>
-							ASC joins the Pastors&apos; Summit 2026 as Guest of Honor and Speaker — a distinguished presence whose participation
-							marks this gathering as a significant and historic occasion for pastoral leadership in Cebu.
+							Sen. Alan joins the Pastors&apos; Summit 2026 as Guest of Honor and Speaker — a distinguished presence whose
+							participation marks this gathering as a significant and historic occasion for pastoral leadership in Cebu.
 						</p>
 
 						<p
