@@ -1,25 +1,19 @@
 "use client";
+import { useEffect } from "react";
 import Link from "next/link";
 import type { RegistrationResponse } from "./types";
 
-export async function downloadIdCard(data: RegistrationResponse) {
-	const { registrant, id_card_download_url } = data;
-	try {
-		const res = await fetch(id_card_download_url);
-		const blob = await res.blob();
-		const url = URL.createObjectURL(blob);
+export function RegistrationCard({ data }: { data: RegistrationResponse }) {
+	const { is_new_registration, message, qr_code_url, event, qr_token } = data;
+
+	useEffect(() => {
+		const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+		const url = `${apiUrl}/pre-register/${event.id}/qr/${qr_token}/download`;
 		const a = document.createElement("a");
 		a.href = url;
-		a.download = `id-card-${registrant.first_name.toLowerCase()}-${registrant.last_name.toLowerCase()}.png`;
+		a.download = `qr-${qr_token}.png`;
 		a.click();
-		URL.revokeObjectURL(url);
-	} catch {
-		window.open(id_card_download_url, "_blank");
-	}
-}
-
-export function RegistrationCard({ data }: { data: RegistrationResponse }) {
-	const { registrant, is_new_registration, message, id_card_url } = data;
+	}, [event.id, qr_token]);
 
 	return (
 		<div className='flex flex-col items-center gap-8'>
@@ -39,35 +33,14 @@ export function RegistrationCard({ data }: { data: RegistrationResponse }) {
 				</p>
 			</div>
 
-			{/* ID card image */}
-			<div className='overflow-hidden shadow-2xl' style={{ border: "1px solid rgba(201,168,76,0.25)" }}>
+			{/* QR Code */}
+			<div className='bg-white rounded-2xl p-4 shadow-2xl'>
 				{/* eslint-disable-next-line @next/next/no-img-element */}
-				<img
-					src={id_card_url}
-					alt={`ID card for ${registrant.first_name} ${registrant.last_name}`}
-					className='block max-w-full'
-					style={{ maxWidth: 340 }}
-				/>
+				<img src={qr_code_url} alt='QR Code' className='block w-56 h-56' />
 			</div>
 
 			{/* Actions */}
 			<div className='flex flex-col sm:flex-row gap-3 w-full max-w-sm'>
-				<button
-					type='button'
-					onClick={() => downloadIdCard(data)}
-					className='flex-1 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-opacity hover:opacity-70'
-					style={{ background: "var(--gold)", color: "var(--royal-blue-deep)", fontFamily: "var(--font-body)" }}>
-					<svg width='15' height='15' viewBox='0 0 16 16' fill='none' aria-hidden='true'>
-						<path
-							d='M8 2v8M5 7l3 3 3-3M3 12h10'
-							stroke='currentColor'
-							strokeWidth='1.5'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-						/>
-					</svg>
-					Download ID Card
-				</button>
 				<Link
 					href='/'
 					className='flex-1 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm transition-opacity hover:opacity-70'

@@ -7,7 +7,7 @@ export interface Registrant {
 	gender: string;
 	religion?: string;
 	address: string;
-	profile_image?: string;
+	profile_image_url?: string;
 }
 
 export interface EventInfo {
@@ -24,6 +24,4 @@ export interface RegistrationResponse {
 	event: EventInfo;
 	qr_token: string;
 	qr_code_url: string;
-	id_card_url: string;
-	id_card_download_url: string;
 }

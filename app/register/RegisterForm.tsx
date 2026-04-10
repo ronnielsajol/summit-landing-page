@@ -1,9 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "@tanstack/react-form";
 import type { RegistrationResponse } from "./types";
 import { FieldError, inputStyle, required, maxLen, emailFormat, chain, imageFile } from "./form-utils";
-import { downloadIdCard } from "./RegistrationCard";
+
+interface PsgcItem {
+	code: string;
+	name: string;
+}
+
+const PSGC = "https://psgc.gitlab.io/api";
+
+const selectStyle: React.CSSProperties = { ...inputStyle, appearance: "none", cursor: "pointer" };
 
 interface Props {
 	onSuccess: (data: RegistrationResponse) => void;
@@ -11,6 +19,53 @@ interface Props {
 
 export function RegisterForm({ onSuccess }: Props) {
 	const [serverError, setServerError] = useState<string | null>(null);
+
+	// --- PSGC cascading select state ---
+	const [regions, setRegions] = useState<PsgcItem[]>([]);
+	const [municipalities, setMunicipalities] = useState<PsgcItem[]>([]);
+	const [cities, setCities] = useState<PsgcItem[]>([]);
+	const [barangays, setBarangays] = useState<PsgcItem[]>([]);
+	const [selectedRegionCode, setSelectedRegionCode] = useState("");
+	const [selectedMunicipalityCode, setSelectedMunicipalityCode] = useState("");
+	const [selectedCityCode, setSelectedCityCode] = useState("");
+	const [selectedBarangayCode, setSelectedBarangayCode] = useState("");
+	const [loadingRegions, setLoadingRegions] = useState(true);
+	const [loadingLocalities, setLoadingLocalities] = useState(false);
+	const [loadingBarangays, setLoadingBarangays] = useState(false);
+
+	useEffect(() => {
+		fetch(`${PSGC}/regions/`)
+			.then((r) => r.json())
+			.then((data: PsgcItem[]) => setRegions(data.sort((a, b) => a.name.localeCompare(b.name))))
+			.catch(() => {})
+			.finally(() => setLoadingRegions(false));
+	}, []);
+
+	const loadLocalities = useCallback((regionCode: string) => {
+		setLoadingLocalities(true);
+		setMunicipalities([]);
+		setCities([]);
+		Promise.all([
+			fetch(`${PSGC}/regions/${regionCode}/municipalities/`).then((r) => r.json()),
+			fetch(`${PSGC}/regions/${regionCode}/cities/`).then((r) => r.json()),
+		])
+			.then(([muns, cits]: [PsgcItem[], PsgcItem[]]) => {
+				setMunicipalities(muns.sort((a, b) => a.name.localeCompare(b.name)));
+				setCities(cits.sort((a, b) => a.name.localeCompare(b.name)));
+			})
+			.catch(() => {})
+			.finally(() => setLoadingLocalities(false));
+	}, []);
+
+	const loadBarangays = useCallback((code: string, type: "cities" | "municipalities") => {
+		setLoadingBarangays(true);
+		setBarangays([]);
+		fetch(`${PSGC}/${type}/${code}/barangays/`)
+			.then((r) => r.json())
+			.then((data: PsgcItem[]) => setBarangays(data.sort((a, b) => a.name.localeCompare(b.name))))
+			.catch(() => {})
+			.finally(() => setLoadingBarangays(false));
+	}, []);
 
 	const form = useForm({
 		defaultValues: {
@@ -20,7 +75,11 @@ export function RegisterForm({ onSuccess }: Props) {
 			contact_number: "",
 			gender: "" as "male" | "female" | "other" | "",
 			religion: "",
-			address: "",
+			street_address: "",
+			barangay: "",
+			city: "",
+			municipality: "",
+			region: "",
 			profile_image: null as File | null,
 		},
 		onSubmit: async ({ value }) => {
@@ -34,7 +93,11 @@ export function RegisterForm({ onSuccess }: Props) {
 				body.append("contact_number", value.contact_number);
 				body.append("gender", value.gender);
 				if (value.religion) body.append("religion", value.religion);
-				body.append("address", value.address);
+				if (value.street_address) body.append("street_address", value.street_address);
+				if (value.barangay) body.append("barangay", value.barangay);
+				if (value.city) body.append("city", value.city);
+				if (value.municipality) body.append("municipality", value.municipality);
+				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
 				const res = await fetch(`${apiUrl}/pre-register/7`, {
 					method: "POST",
@@ -48,7 +111,6 @@ export function RegisterForm({ onSuccess }: Props) {
 				}
 				const registration = data as RegistrationResponse;
 				onSuccess(registration);
-				downloadIdCard(registration);
 			} catch {
 				setServerError("Network error. Please check your connection and try again.");
 			}
@@ -364,34 +426,221 @@ export function RegisterForm({ onSuccess }: Props) {
 
 					{/* Address */}
 					<div className='mb-8'>
-						<form.Field
-							name='address'
-							validators={{
-								onBlur: chain(required("Address"), maxLen(500)),
-								onSubmit: chain(required("Address"), maxLen(500)),
-							}}>
-							{(field) => (
-								<div>
-									<label
-										htmlFor={field.name}
-										className='block text-sm font-medium mb-1.5'
-										style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
-										Address <span style={{ color: "#ef4444" }}>*</span>
-									</label>
-									<textarea
-										id={field.name}
-										name={field.name}
-										rows={3}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										maxLength={500}
-										style={{ ...inputStyle, resize: "vertical" }}
-									/>
-									<FieldError errors={field.state.meta.errors} />
-								</div>
-							)}
-						</form.Field>
+						<p className='block text-sm font-medium mb-3' style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
+							Address <span style={{ color: "#ef4444" }}>*</span>
+						</p>
+
+						{/* Street Address */}
+						<div className='mb-3'>
+							<form.Field
+								name='street_address'
+								validators={{
+									onBlur: chain(required("Street address"), maxLen(255)),
+									onSubmit: chain(required("Street address"), maxLen(255)),
+								}}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Street Address
+										</label>
+										<input
+											id={field.name}
+											name={field.name}
+											type='text'
+											placeholder='House no., street name'
+											autoComplete='street-address'
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											maxLength={255}
+											style={inputStyle}
+										/>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+
+						{/* Region */}
+						<div className='mb-3'>
+							<form.Field
+								name='region'
+								validators={{
+									onBlur: ({ value }: { value: string }) => (!value ? "Region is required" : undefined),
+									onSubmit: ({ value }: { value: string }) => (!value ? "Region is required" : undefined),
+								}}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Region
+										</label>
+										<select
+											id={field.name}
+											name={field.name}
+											value={selectedRegionCode}
+											disabled={loadingRegions}
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const item = regions.find((r) => r.code === e.target.value);
+												field.handleChange(item?.name ?? "");
+												setSelectedRegionCode(e.target.value);
+												setSelectedMunicipalityCode("");
+												setSelectedCityCode("");
+												setSelectedBarangayCode("");
+												form.setFieldValue("municipality", "");
+												form.setFieldValue("city", "");
+												form.setFieldValue("barangay", "");
+												if (e.target.value) loadLocalities(e.target.value);
+											}}
+											style={selectStyle}>
+											<option value='' disabled>
+												{loadingRegions ? "Loading regions…" : "Select region"}
+											</option>
+											{regions.map((r) => (
+												<option key={r.code} value={r.code}>
+													{r.name}
+												</option>
+											))}
+										</select>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+
+						{/* Municipality + City */}
+						<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3'>
+							<form.Field name='municipality'>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Municipality
+										</label>
+										<select
+											id={field.name}
+											name={field.name}
+											value={selectedMunicipalityCode}
+											disabled={!selectedRegionCode || loadingLocalities}
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const item = municipalities.find((m) => m.code === e.target.value);
+												field.handleChange(item?.name ?? "");
+												setSelectedMunicipalityCode(e.target.value);
+												setSelectedCityCode("");
+												setSelectedBarangayCode("");
+												form.setFieldValue("city", "");
+												form.setFieldValue("barangay", "");
+												if (e.target.value) loadBarangays(e.target.value, "municipalities");
+											}}
+											style={selectStyle}>
+											<option value=''>
+												{!selectedRegionCode ? "Select region first" : loadingLocalities ? "Loading…" : "Select municipality"}
+											</option>
+											{municipalities.map((m) => (
+												<option key={m.code} value={m.code}>
+													{m.name}
+												</option>
+											))}
+										</select>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+
+							<form.Field name='city'>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											City
+										</label>
+										<select
+											id={field.name}
+											name={field.name}
+											value={selectedCityCode}
+											disabled={!selectedRegionCode || loadingLocalities}
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const item = cities.find((c) => c.code === e.target.value);
+												field.handleChange(item?.name ?? "");
+												setSelectedCityCode(e.target.value);
+												setSelectedMunicipalityCode("");
+												setSelectedBarangayCode("");
+												form.setFieldValue("municipality", "");
+												form.setFieldValue("barangay", "");
+												if (e.target.value) loadBarangays(e.target.value, "cities");
+											}}
+											style={selectStyle}>
+											<option value=''>{!selectedRegionCode ? "Select region first" : loadingLocalities ? "Loading…" : "Select city"}</option>
+											{cities.map((c) => (
+												<option key={c.code} value={c.code}>
+													{c.name}
+												</option>
+											))}
+										</select>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+
+						{/* Barangay */}
+						<div>
+							<form.Field
+								name='barangay'
+								validators={{
+									onBlur: ({ value }: { value: string }) => (!value ? "Barangay is required" : undefined),
+									onSubmit: ({ value }: { value: string }) => (!value ? "Barangay is required" : undefined),
+								}}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Barangay
+										</label>
+										<select
+											id={field.name}
+											name={field.name}
+											value={selectedBarangayCode}
+											disabled={(!selectedMunicipalityCode && !selectedCityCode) || loadingBarangays}
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const item = barangays.find((b) => b.code === e.target.value);
+												field.handleChange(item?.name ?? "");
+												setSelectedBarangayCode(e.target.value);
+											}}
+											style={selectStyle}>
+											<option value=''>
+												{!selectedMunicipalityCode && !selectedCityCode
+													? "Select municipality or city first"
+													: loadingBarangays
+														? "Loading barangays…"
+														: "Select barangay"}
+											</option>
+											{barangays.map((b) => (
+												<option key={b.code} value={b.code}>
+													{b.name}
+												</option>
+											))}
+										</select>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
 					</div>
 
 					{/* Submit */}

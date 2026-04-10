@@ -32,6 +32,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 
 			mm.add("(prefers-reduced-motion: no-preference)", () => {
 				// Pre-hide so they never flash before their tween runs
+
 				gsap.set(ctaRef.current, { autoAlpha: 0, y: 24 });
 
 				const tl = gsap.timeline({ paused: true, defaults: { ease: "power3.out" } });
