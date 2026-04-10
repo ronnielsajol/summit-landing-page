@@ -22,15 +22,18 @@ export function RegisterForm({ onSuccess }: Props) {
 
 	// --- PSGC cascading select state ---
 	const [regions, setRegions] = useState<PsgcItem[]>([]);
+	const [provinces, setProvinces] = useState<PsgcItem[]>([]);
 	const [municipalities, setMunicipalities] = useState<PsgcItem[]>([]);
 	const [cities, setCities] = useState<PsgcItem[]>([]);
 	const [barangays, setBarangays] = useState<PsgcItem[]>([]);
 	const [selectedRegionCode, setSelectedRegionCode] = useState("");
+	const [selectedProvinceCode, setSelectedProvinceCode] = useState("");
 	const [selectedMunicipalityCode, setSelectedMunicipalityCode] = useState("");
 	const [selectedCityCode, setSelectedCityCode] = useState("");
 	const [selectedLocalityValue, setSelectedLocalityValue] = useState("");
 	const [selectedBarangayCode, setSelectedBarangayCode] = useState("");
 	const [loadingRegions, setLoadingRegions] = useState(true);
+	const [loadingProvinces, setLoadingProvinces] = useState(false);
 	const [loadingLocalities, setLoadingLocalities] = useState(false);
 	const [loadingBarangays, setLoadingBarangays] = useState(false);
 
@@ -42,14 +45,12 @@ export function RegisterForm({ onSuccess }: Props) {
 			.finally(() => setLoadingRegions(false));
 	}, []);
 
-	const loadLocalities = useCallback((regionCode: string) => {
+	const loadLocalities = useCallback((code: string, source: "region" | "province") => {
 		setLoadingLocalities(true);
 		setMunicipalities([]);
 		setCities([]);
-		Promise.all([
-			fetch(`${PSGC}/regions/${regionCode}/municipalities/`).then((r) => r.json()),
-			fetch(`${PSGC}/regions/${regionCode}/cities/`).then((r) => r.json()),
-		])
+		const base = source === "province" ? `${PSGC}/provinces/${code}` : `${PSGC}/regions/${code}`;
+		Promise.all([fetch(`${base}/municipalities/`).then((r) => r.json()), fetch(`${base}/cities/`).then((r) => r.json())])
 			.then(([muns, cits]: [PsgcItem[], PsgcItem[]]) => {
 				setMunicipalities(muns.sort((a, b) => a.name.localeCompare(b.name)));
 				setCities(cits.sort((a, b) => a.name.localeCompare(b.name)));
@@ -57,6 +58,26 @@ export function RegisterForm({ onSuccess }: Props) {
 			.catch(() => {})
 			.finally(() => setLoadingLocalities(false));
 	}, []);
+
+	const loadProvinces = useCallback(
+		(regionCode: string) => {
+			setLoadingProvinces(true);
+			setProvinces([]);
+			setMunicipalities([]);
+			setCities([]);
+			fetch(`${PSGC}/regions/${regionCode}/provinces/`)
+				.then((r) => r.json())
+				.then((data: PsgcItem[]) => {
+					const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
+					setProvinces(sorted);
+					// Region with no provinces (e.g. NCR) — load localities directly
+					if (sorted.length === 0) loadLocalities(regionCode, "region");
+				})
+				.catch(() => {})
+				.finally(() => setLoadingProvinces(false));
+		},
+		[loadLocalities]
+	);
 
 	const loadBarangays = useCallback((code: string, type: "cities" | "municipalities") => {
 		setLoadingBarangays(true);
@@ -80,6 +101,7 @@ export function RegisterForm({ onSuccess }: Props) {
 			barangay: "",
 			city: "",
 			municipality: "",
+			province: "",
 			region: "",
 			profile_image: null as File | null,
 		},
@@ -98,6 +120,7 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.barangay) body.append("barangay", value.barangay);
 				if (value.city) body.append("city", value.city);
 				if (value.municipality) body.append("municipality", value.municipality);
+				if (value.province) body.append("province", value.province);
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
 				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
@@ -491,14 +514,16 @@ export function RegisterForm({ onSuccess }: Props) {
 												const item = regions.find((r) => r.code === e.target.value);
 												field.handleChange(item?.name ?? "");
 												setSelectedRegionCode(e.target.value);
+												setSelectedProvinceCode("");
 												setSelectedMunicipalityCode("");
 												setSelectedCityCode("");
 												setSelectedLocalityValue("");
 												setSelectedBarangayCode("");
+												form.setFieldValue("province", "");
 												form.setFieldValue("municipality", "");
 												form.setFieldValue("city", "");
 												form.setFieldValue("barangay", "");
-												if (e.target.value) loadLocalities(e.target.value);
+												if (e.target.value) loadProvinces(e.target.value);
 											}}
 											style={selectStyle}>
 											<option value='' disabled>
@@ -515,7 +540,58 @@ export function RegisterForm({ onSuccess }: Props) {
 								)}
 							</form.Field>
 						</div>
-
+						{/* Province */}
+						<div className='mb-3'>
+							<form.Field name='province'>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Province
+										</label>
+										<select
+											id={field.name}
+											name={field.name}
+											value={selectedProvinceCode}
+											disabled={!selectedRegionCode || loadingProvinces || provinces.length === 0}
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const item = provinces.find((p) => p.code === e.target.value);
+												field.handleChange(item?.name ?? "");
+												setSelectedProvinceCode(e.target.value);
+												setSelectedLocalityValue("");
+												setSelectedMunicipalityCode("");
+												setSelectedCityCode("");
+												setSelectedBarangayCode("");
+												form.setFieldValue("municipality", "");
+												form.setFieldValue("city", "");
+												form.setFieldValue("barangay", "");
+												setBarangays([]);
+												if (e.target.value) loadLocalities(e.target.value, "province");
+											}}
+											style={selectStyle}>
+											<option value=''>
+												{!selectedRegionCode
+													? "Select region first"
+													: loadingProvinces
+														? "Loading…"
+														: provinces.length === 0
+															? "No provinces in this region"
+															: "Select province"}
+											</option>
+											{provinces.map((p) => (
+												<option key={p.code} value={p.code}>
+													{p.name}
+												</option>
+											))}
+										</select>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
 						{/* Municipality / City (combined) */}
 						<div className='mb-3'>
 							<form.Field name='city'>
@@ -530,7 +606,9 @@ export function RegisterForm({ onSuccess }: Props) {
 										<select
 											id='locality-select'
 											value={selectedLocalityValue}
-											disabled={!selectedRegionCode || loadingLocalities}
+											disabled={
+												!selectedRegionCode || loadingProvinces || loadingLocalities || (provinces.length > 0 && !selectedProvinceCode)
+											}
 											onBlur={field.handleBlur}
 											onChange={(e) => {
 												const val = e.target.value;
