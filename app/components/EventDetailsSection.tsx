@@ -28,17 +28,31 @@ export default function EventDetailsSection() {
 					},
 				});
 
-				gsap.from(cardsRef.current?.children ?? [], {
-					opacity: 0,
-					y: 35,
-					stagger: 0.1,
-					duration: 0.75,
-					ease: "power3.out",
-					scrollTrigger: {
-						trigger: cardsRef.current,
-						start: "top 78%",
-					},
+				const cardEls = cardsRef.current ? (Array.from(cardsRef.current.children) as HTMLElement[]) : [];
+				cardEls.forEach((el) => {
+					el.style.transition = "none";
 				});
+				gsap.fromTo(
+					cardEls,
+					{ opacity: 0, y: 35 },
+					{
+						opacity: 1,
+						y: 0,
+						stagger: 0.1,
+						duration: 0.75,
+						ease: "power3.out",
+						clearProps: "y,opacity",
+						onComplete: () => {
+							cardEls.forEach((el) => {
+								el.style.transition = "";
+							});
+						},
+						scrollTrigger: {
+							trigger: cardsRef.current,
+							start: "top 78%",
+						},
+					}
+				);
 
 				gsap.from(featuredRef.current, {
 					opacity: 0,

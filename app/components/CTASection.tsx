@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { CalendarDays, Clock, MapPin, Users } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -137,8 +138,8 @@ export default function CTASection() {
 
 					{/* CTAs */}
 					<div className='flex flex-wrap justify-center gap-4'>
-						<button
-							type='button'
+						<Link
+							href='/register'
 							className='group relative inline-flex items-center gap-2.5 rounded-full px-9 py-4 text-sm font-medium overflow-hidden transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]'
 							style={{
 								background: "var(--gold)",
@@ -148,12 +149,12 @@ export default function CTASection() {
 								letterSpacing: "0.03em",
 								boxShadow: "0 8px 32px rgba(201,168,76,0.4)",
 							}}>
-							<span>Confirm Attendance</span>
+							<span>Pre-Registration</span>
 							<svg width='16' height='16' viewBox='0 0 16 16' fill='none' aria-hidden='true'>
 								<path d='M3 8h10M8 3l5 5-5 5' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round' />
 							</svg>
 							<span className='absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-white rounded-full' />
-						</button>
+						</Link>
 
 						<a
 							href='#contact'

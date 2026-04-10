@@ -72,13 +72,13 @@ export default function PageLoader({ onComplete }: PageLoaderProps) {
 			{/* Fade overlay that sits on top of content */}
 			<div
 				ref={overlayRef}
-				className='fixed inset-0 z-[9998] pointer-events-none'
+				className='fixed inset-0 z-9998 pointer-events-none'
 				style={{ background: "var(--royal-blue-deep)" }}
 			/>
 			{/* Main loader panel */}
 			<div
 				ref={loaderRef}
-				className='fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden'
+				className='fixed inset-0 z-9999 flex flex-col items-center justify-center overflow-hidden'
 				style={{ background: "var(--ivory)" }}>
 				{/* Subtle mesh */}
 				<div

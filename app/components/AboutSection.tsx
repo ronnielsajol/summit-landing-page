@@ -42,19 +42,32 @@ export default function AboutSection() {
 					);
 
 				// Pillars: each card animates independently when they enter the viewport
-				const pillarsChildren = pillarsRef.current ? Array.from(pillarsRef.current.children) : [];
-				gsap.set(pillarsChildren, { opacity: 0, y: 30 });
-				gsap.to(pillarsChildren, {
-					opacity: 1,
-					y: 0,
-					stagger: 0.12,
-					duration: 0.8,
-					ease: "power3.out",
-					scrollTrigger: {
-						trigger: pillarsRef.current,
-						start: "top 85%",
-					},
+				const pillarsChildren = pillarsRef.current ? (Array.from(pillarsRef.current.children) as HTMLElement[]) : [];
+				// Suppress CSS transition-transform so GSAP can drive opacity + y simultaneously
+				pillarsChildren.forEach((el) => {
+					el.style.transition = "none";
 				});
+				gsap.fromTo(
+					pillarsChildren,
+					{ opacity: 0, y: 30 },
+					{
+						opacity: 1,
+						y: 0,
+						stagger: 0.12,
+						duration: 0.8,
+						ease: "power3.out",
+						clearProps: "y,opacity",
+						onComplete: () => {
+							pillarsChildren.forEach((el) => {
+								el.style.transition = "";
+							});
+						},
+						scrollTrigger: {
+							trigger: pillarsRef.current,
+							start: "top 85%",
+						},
+					}
+				);
 
 				// Scripture verse
 				gsap.from(verseRef.current, {
