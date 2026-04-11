@@ -105,7 +105,7 @@ export function RegisterForm({ onSuccess }: Props) {
 			region: "",
 			profile_image: null as File | null,
 			additional_details: {
-				name_or_church: "",
+				name_of_church: "",
 				position_in_church: "",
 				church_address: "",
 				estimated_members: "",
@@ -129,7 +129,7 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.province) body.append("province", value.province);
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
-				body.append("additional_details", JSON.stringify(value.additional_details));
+				body.append("additional_details", JSON.stringify([value.additional_details]));
 				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
 					method: "POST",
 					headers: { Accept: "application/json" },
@@ -729,16 +729,16 @@ export function RegisterForm({ onSuccess }: Props) {
 							Church Information
 						</p>
 
-						{/* Name or Church */}
+						{/* Name of Church */}
 						<div className='mb-3'>
-							<form.Field name='additional_details.name_or_church' validators={{ onChange: maxLen(255) }}>
+							<form.Field name='additional_details.name_of_church' validators={{ onChange: maxLen(255) }}>
 								{(field) => (
 									<div>
 										<label
 											htmlFor={field.name}
 											className='block text-xs font-medium mb-1'
 											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
-											Name or Church
+											Name of Church
 										</label>
 										<input
 											id={field.name}
