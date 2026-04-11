@@ -104,6 +104,12 @@ export function RegisterForm({ onSuccess }: Props) {
 			province: "",
 			region: "",
 			profile_image: null as File | null,
+			additional_details: {
+				name_or_church: "",
+				position_in_church: "",
+				church_address: "",
+				estimated_members: "",
+			},
 		},
 		onSubmit: async ({ value }) => {
 			setServerError(null);
@@ -123,6 +129,7 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.province) body.append("province", value.province);
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
+				body.append("additional_details", JSON.stringify(value.additional_details));
 				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
 					method: "POST",
 					headers: { Accept: "application/json" },
@@ -716,7 +723,120 @@ export function RegisterForm({ onSuccess }: Props) {
 							</form.Field>
 						</div>
 					</div>
+					{/* Additional Details */}
+					<div className='mb-8'>
+						<p className='block text-sm font-medium mb-3' style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
+							Church Information
+						</p>
 
+						{/* Name or Church */}
+						<div className='mb-3'>
+							<form.Field name='additional_details.name_or_church' validators={{ onChange: maxLen(255) }}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Name or Church
+										</label>
+										<input
+											id={field.name}
+											name={field.name}
+											type='text'
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											maxLength={255}
+											style={inputStyle}
+										/>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+
+						{/* Position in Church */}
+						<div className='mb-3'>
+							<form.Field name='additional_details.position_in_church' validators={{ onChange: maxLen(255) }}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Position in Church
+										</label>
+										<input
+											id={field.name}
+											name={field.name}
+											type='text'
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											maxLength={255}
+											style={inputStyle}
+										/>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+
+						{/* Church Address */}
+						<div className='mb-3'>
+							<form.Field name='additional_details.church_address' validators={{ onChange: maxLen(500) }}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Church Address
+										</label>
+										<input
+											id={field.name}
+											name={field.name}
+											type='text'
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											maxLength={500}
+											style={inputStyle}
+										/>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+
+						{/* Estimated Number of Members */}
+						<div>
+							<form.Field name='additional_details.estimated_members' validators={{ onChange: maxLen(50) }}>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Estimate Number of Members
+										</label>
+										<input
+											id={field.name}
+											name={field.name}
+											type='number'
+											min='0'
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											style={inputStyle}
+										/>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
+					</div>
 					{/* Submit */}
 					<form.Subscribe selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}>
 						{({ canSubmit, isSubmitting }) => (
