@@ -96,6 +96,7 @@ export default function SpeakerSection() {
 								background: "linear-gradient(160deg, var(--royal-blue) 0%, var(--royal-blue-deep) 100%)",
 								border: "1px solid var(--border)",
 							}}>
+							<img className='object-cover h-full w-full' src='/asc.png' alt='ASC img' />
 							{/* Decorative border */}
 							<div
 								className='absolute inset-0 rounded-2xl'
@@ -104,36 +105,6 @@ export default function SpeakerSection() {
 									margin: "8px",
 								}}
 							/>
-
-							{/* Placeholder silhouette area */}
-							<div className='absolute inset-0 flex flex-col items-center justify-end pb-10 px-8'>
-								{/* Abstract "figure" */}
-								<div className='text-center'>
-									<div
-										className='w-20 h-20 rounded-full mx-auto mb-4'
-										style={{
-											background: "rgba(201,168,76,0.25)",
-											border: "2px solid rgba(201,168,76,0.4)",
-										}}>
-										<div className='w-full h-full flex items-center justify-center'>
-											<svg width='40' height='40' viewBox='0 0 40 40' fill='none' aria-hidden='true'>
-												<circle cx='20' cy='14' r='7' stroke='rgba(201,168,76,0.7)' strokeWidth='1.5' />
-												<path
-													d='M6 38c0-7.73 6.27-14 14-14s14 6.27 14 14'
-													stroke='rgba(201,168,76,0.7)'
-													strokeWidth='1.5'
-													strokeLinecap='round'
-												/>
-											</svg>
-										</div>
-									</div>
-									<p
-										className='text-xs tracking-widest uppercase'
-										style={{ color: "rgba(201,168,76,0.6)", fontFamily: "var(--font-body)" }}>
-										Photo Placeholder
-									</p>
-								</div>
-							</div>
 
 							{/* Gold corner ornament */}
 							<div

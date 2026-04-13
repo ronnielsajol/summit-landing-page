@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const schedule = [
 	{
-		time: "9:00 AM",
+		time: "07:30 AM",
 		period: "Pre-Program",
 		title: "Registration & Welcome",
 		description: "Arrival and registration of participants. Delegates are welcomed and seated.",

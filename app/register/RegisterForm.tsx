@@ -106,7 +106,7 @@ export function RegisterForm({ onSuccess }: Props) {
 			last_name: "",
 			email: "",
 			contact_number: "",
-			gender: "" as "male" | "female" | "other" | "",
+			gender: "" as "male" | "female" | "",
 			religion: "",
 			street_address: "",
 			barangay: "",
@@ -362,14 +362,13 @@ export function RegisterForm({ onSuccess }: Props) {
 										name={field.name}
 										value={field.state.value}
 										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value as "male" | "female" | "other" | "")}
+										onChange={(e) => field.handleChange(e.target.value as "male" | "female" | "")}
 										style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}>
 										<option value='' disabled>
 											Select gender
 										</option>
 										<option value='male'>Male</option>
 										<option value='female'>Female</option>
-										<option value='other'>Other</option>
 									</select>
 									<FieldError errors={field.state.meta.errors} />
 								</div>
@@ -755,7 +754,9 @@ export function RegisterForm({ onSuccess }: Props) {
 											style={selectStyle}>
 											<option value=''>Select ministry</option>
 											{ministries.map((m) => (
-												<option key={m} value={m}>{m}</option>
+												<option key={m} value={m}>
+													{m}
+												</option>
 											))}
 										</select>
 										<FieldError errors={field.state.meta.errors} />

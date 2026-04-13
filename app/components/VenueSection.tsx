@@ -238,7 +238,7 @@ export default function VenueSection() {
 								</div>
 								<div>
 									<p className='text-sm font-medium mb-1' style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
-										Registration starts at 9:00 AM
+										Registration starts at 07:30 AM
 									</p>
 									<p className='text-xs leading-relaxed' style={{ color: "var(--muted)", fontFamily: "var(--font-body)" }}>
 										Delegates are encouraged to arrive early for registration and to prepare for the opening program at 09:00 AM.
