@@ -229,7 +229,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 					<div className='flex sm:hidden items-start justify-center gap-5'>
 						{[
 							{ icon: <CalendarDays size={18} />, label: "April 17, 2026", sub: "Friday" },
-							{ icon: <Clock size={18} />, label: "10:00 AM – 2:00 PM", sub: "Program" },
+							{ icon: <Clock size={18} />, label: "09:00 AM – 03:00 PM", sub: "Program" },
 							{ icon: <MapPin size={18} />, label: "Nissi Academy", sub: "Lapu-Lapu City" },
 						].map((item, i, arr) => (
 							<div key={item.label} className='flex items-start gap-5'>
@@ -253,7 +253,7 @@ export default function HeroSection({ loaded }: HeroSectionProps) {
 					<div className='hidden sm:flex flex-wrap justify-center gap-3'>
 						{[
 							{ icon: <CalendarDays className='text-white/70' size={14} />, label: "April 17, 2026", sub: "Friday" },
-							{ icon: <Clock className='text-white/70' size={14} />, label: "10:00 AM – 2:00 PM", sub: "Program" },
+							{ icon: <Clock className='text-white/70' size={14} />, label: "09:00 AM – 03:00 PM", sub: "Program" },
 							{ icon: <MapPin className='text-white/70' size={14} />, label: "Lapu-Lapu City, Cebu", sub: "Nissi Academy" },
 						].map((item) => (
 							<div

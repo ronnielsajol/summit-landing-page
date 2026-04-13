@@ -117,7 +117,7 @@ export default function CTASection() {
 					<div className='flex flex-wrap justify-center gap-3 mb-10'>
 						{[
 							{ icon: <CalendarDays className='text-white/70' size={12} />, label: "April 17, 2026" },
-							{ icon: <Clock className='text-white/70' size={12} />, label: "10:00 AM" },
+							{ icon: <Clock className='text-white/70' size={12} />, label: "09:00 AM" },
 							{ icon: <MapPin className='text-white/70' size={12} />, label: "Lapu-Lapu City, Cebu" },
 							{ icon: <Users className='text-white/70' size={12} />, label: "1,000+ Leaders" },
 						].map((chip) => (

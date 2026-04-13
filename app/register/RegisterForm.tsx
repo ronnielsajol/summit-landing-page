@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm } from "@tanstack/react-form";
 import type { RegistrationResponse } from "./types";
 import { FieldError, inputStyle, required, maxLen, emailFormat, chain, imageFile } from "./form-utils";
+import { Combobox } from "./Combobox";
 
 interface PsgcItem {
 	code: string;
@@ -37,12 +38,22 @@ export function RegisterForm({ onSuccess }: Props) {
 	const [loadingLocalities, setLoadingLocalities] = useState(false);
 	const [loadingBarangays, setLoadingBarangays] = useState(false);
 
+	// --- Ministries ---
+	const [ministries, setMinistries] = useState<string[]>([]);
+
 	useEffect(() => {
 		fetch(`${PSGC}/regions/`)
 			.then((r) => r.json())
 			.then((data: PsgcItem[]) => setRegions(data.sort((a, b) => a.name.localeCompare(b.name))))
 			.catch(() => {})
 			.finally(() => setLoadingRegions(false));
+	}, []);
+
+	useEffect(() => {
+		fetch("/ministries.json")
+			.then((r) => r.json())
+			.then((data: string[]) => setMinistries(data.sort((a, b) => a.localeCompare(b))))
+			.catch(() => {});
 	}, []);
 
 	const loadLocalities = useCallback((code: string, source: "region" | "province") => {
@@ -104,10 +115,10 @@ export function RegisterForm({ onSuccess }: Props) {
 			province: "",
 			region: "",
 			profile_image: null as File | null,
+			ministry: "",
 			additional_details: {
 				name_of_church: "",
 				position_in_church: "",
-				church_address: "",
 				estimated_members: "",
 			},
 		},
@@ -129,6 +140,7 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.province) body.append("province", value.province);
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
+				if (value.ministry) body.append("ministry", value.ministry);
 				body.append("additional_details", JSON.stringify([value.additional_details]));
 				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
 					method: "POST",
@@ -687,36 +699,30 @@ export function RegisterForm({ onSuccess }: Props) {
 								{(field) => (
 									<div>
 										<label
-											htmlFor={field.name}
+											htmlFor='barangay-combobox'
 											className='block text-xs font-medium mb-1'
 											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
 											Barangay
 										</label>
-										<select
-											id={field.name}
-											name={field.name}
+										<Combobox
+											id='barangay-combobox'
+											options={barangays.map((b) => ({ value: b.code, label: b.name }))}
 											value={selectedBarangayCode}
-											disabled={(!selectedMunicipalityCode && !selectedCityCode) || loadingBarangays}
-											onBlur={field.handleBlur}
-											onChange={(e) => {
-												const item = barangays.find((b) => b.code === e.target.value);
+											onChange={(code) => {
+												const item = barangays.find((b) => b.code === code);
 												field.handleChange(item?.name ?? "");
-												setSelectedBarangayCode(e.target.value);
+												setSelectedBarangayCode(code);
 											}}
-											style={selectStyle}>
-											<option value=''>
-												{!selectedMunicipalityCode && !selectedCityCode
+											onBlur={field.handleBlur}
+											disabled={(!selectedMunicipalityCode && !selectedCityCode) || loadingBarangays}
+											placeholder={
+												!selectedMunicipalityCode && !selectedCityCode
 													? "Select municipality or city first"
 													: loadingBarangays
 														? "Loading barangays…"
-														: "Select barangay"}
-											</option>
-											{barangays.map((b) => (
-												<option key={b.code} value={b.code}>
-													{b.name}
-												</option>
-											))}
-										</select>
+														: "Search barangay…"
+											}
+										/>
 										<FieldError errors={field.state.meta.errors} />
 									</div>
 								)}
@@ -728,6 +734,35 @@ export function RegisterForm({ onSuccess }: Props) {
 						<p className='block text-sm font-medium mb-3' style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
 							Church Information
 						</p>
+
+						{/* Ministry */}
+						<div className='mb-3'>
+							<form.Field name='ministry'>
+								{(field) => (
+									<div>
+										<label
+											htmlFor={field.name}
+											className='block text-xs font-medium mb-1'
+											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
+											Ministry
+										</label>
+										<select
+											id={field.name}
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											style={selectStyle}>
+											<option value=''>Select ministry</option>
+											{ministries.map((m) => (
+												<option key={m} value={m}>{m}</option>
+											))}
+										</select>
+										<FieldError errors={field.state.meta.errors} />
+									</div>
+								)}
+							</form.Field>
+						</div>
 
 						{/* Name of Church */}
 						<div className='mb-3'>
@@ -783,36 +818,9 @@ export function RegisterForm({ onSuccess }: Props) {
 							</form.Field>
 						</div>
 
-						{/* Church Address */}
-						<div className='mb-3'>
-							<form.Field name='additional_details.church_address' validators={{ onChange: maxLen(500) }}>
-								{(field) => (
-									<div>
-										<label
-											htmlFor={field.name}
-											className='block text-xs font-medium mb-1'
-											style={{ color: "var(--slate)", fontFamily: "var(--font-body)" }}>
-											Church Address
-										</label>
-										<input
-											id={field.name}
-											name={field.name}
-											type='text'
-											value={field.state.value}
-											onBlur={field.handleBlur}
-											onChange={(e) => field.handleChange(e.target.value)}
-											maxLength={500}
-											style={inputStyle}
-										/>
-										<FieldError errors={field.state.meta.errors} />
-									</div>
-								)}
-							</form.Field>
-						</div>
-
 						{/* Estimated Number of Members */}
 						<div>
-							<form.Field name='additional_details.estimated_members' validators={{ onChange: maxLen(50) }}>
+							<form.Field name='additional_details.estimated_members' validators={{ onChange: maxLen(500) }}>
 								{(field) => (
 									<div>
 										<label

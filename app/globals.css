@@ -208,3 +208,9 @@ body.loading {
 		opacity: 0;
 	}
 }
+
+/* cmdk Combobox item hover/focus highlight */
+[cmdk-item]:hover,
+[cmdk-item][aria-selected="true"] {
+	background: var(--royal-blue-mist) !important;
+}

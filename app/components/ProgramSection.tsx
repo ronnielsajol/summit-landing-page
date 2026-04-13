@@ -14,7 +14,7 @@ const schedule = [
 		highlight: false,
 	},
 	{
-		time: "10:00 AM",
+		time: "09:00 AM",
 		period: "Opening",
 		title: "Program Proper Begins",
 		description: "Official opening ceremonies, worship, and opening remarks by Bishop Noel Centino and CPMA leadership.",
@@ -44,7 +44,7 @@ const schedule = [
 		badge: "Keynote",
 	},
 	{
-		time: "2:00 PM",
+		time: "03:00 PM",
 		period: "Closing",
 		title: "Fellowship & Photo Opportunity",
 		description: "Per-ministry group photos and open fellowship time. A fitting celebration of unity and purpose.",
