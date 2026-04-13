@@ -115,8 +115,8 @@ export function RegisterForm({ onSuccess }: Props) {
 			province: "",
 			region: "",
 			profile_image: null as File | null,
-			ministry: "",
 			additional_details: {
+				ministry: "",
 				name_of_church: "",
 				position_in_church: "",
 				estimated_members: "",
@@ -140,7 +140,6 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.province) body.append("province", value.province);
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
-				if (value.ministry) body.append("ministry", value.ministry);
 				body.append("additional_details", JSON.stringify([value.additional_details]));
 				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
 					method: "POST",
@@ -731,12 +730,12 @@ export function RegisterForm({ onSuccess }: Props) {
 					{/* Additional Details */}
 					<div className='mb-8'>
 						<p className='block text-sm font-medium mb-3' style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
-							Church Information
+							Church Details
 						</p>
 
 						{/* Ministry */}
 						<div className='mb-3'>
-							<form.Field name='ministry'>
+							<form.Field name='additional_details.ministry'>
 								{(field) => (
 									<div>
 										<label
