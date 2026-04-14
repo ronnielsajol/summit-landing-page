@@ -85,7 +85,7 @@ export default function EventDetailsSection() {
 		{
 			label: "Time",
 			value: "09:00 AM – 03:00 PM",
-			sub: "4 hours of program",
+			sub: "6 hours of program",
 			icon: (
 				<svg width='20' height='20' viewBox='0 0 20 20' fill='none' aria-hidden='true'>
 					<circle cx='10' cy='10' r='8' stroke='currentColor' strokeWidth='1.5' />

@@ -1,20 +1,21 @@
 "use client";
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Navigation from "./components/Navigation";
-import HeroSection from "./components/HeroSection";
-import AboutSection from "./components/AboutSection";
-import EventDetailsSection from "./components/EventDetailsSection";
-import ProgramSection from "./components/ProgramSection";
-import SpeakerSection from "./components/SpeakerSection";
-import VenueSection from "./components/VenueSection";
-import CTASection from "./components/CTASection";
-import ContactSection from "./components/ContactSection";
-import Footer from "./components/Footer";
-import SectionDivider from "./components/SectionDivider";
+import Navigation from "@/components/Navigation";
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import EventDetailsSection from "@/components/EventDetailsSection";
+import ProgramSection from "@/components/ProgramSection";
+import CoreMembersSection from "@/components/CoreMembersSection";
+import SpeakerSection from "@/components/SpeakerSection";
+import VenueSection from "@/components/VenueSection";
+import CTASection from "@/components/CTASection";
+import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
+import SectionDivider from "@/components/SectionDivider";
 
-const PageLoader = dynamic(() => import("./components/PageLoader"), { ssr: false });
-const CustomCursor = dynamic(() => import("./components/CustomCursor"), { ssr: false });
+const PageLoader = dynamic(() => import("@/components/PageLoader"), { ssr: false });
+const CustomCursor = dynamic(() => import("@/components/CustomCursor"), { ssr: false });
 
 export default function Home() {
 	const [loaded, setLoaded] = useState(false);
@@ -31,6 +32,8 @@ export default function Home() {
 				<EventDetailsSection />
 				<SectionDivider variant='dark' />
 				<ProgramSection />
+				<SectionDivider variant='dark' />
+				<CoreMembersSection />
 				<SectionDivider variant='dark' />
 				<SpeakerSection />
 				<SectionDivider variant='dark' />
