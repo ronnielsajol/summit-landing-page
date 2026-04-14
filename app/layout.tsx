@@ -39,7 +39,7 @@ export default function RootLayout({
 		<html lang='en' className={`${cormorant.variable} ${jost.variable}`}>
 			<body className='min-h-screen antialiased'>
 				<Providers>
-					<Toaster />
+					<Toaster richColors />
 
 					{children}
 				</Providers>
