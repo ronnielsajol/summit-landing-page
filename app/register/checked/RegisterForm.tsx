@@ -468,7 +468,7 @@ export function RegisterForm({ onSuccess }: Props) {
 					{/* Address */}
 					<div className='mb-8'>
 						<p className='block text-sm font-medium mb-3' style={{ color: "var(--charcoal)", fontFamily: "var(--font-body)" }}>
-							Address <span style={{ color: "#ef4444" }}>*</span>
+							Address
 						</p>
 
 						{/* Street Address */}
@@ -476,8 +476,8 @@ export function RegisterForm({ onSuccess }: Props) {
 							<form.Field
 								name='street_address'
 								validators={{
-									onBlur: chain(required("Street address"), maxLen(255)),
-									onSubmit: chain(required("Street address"), maxLen(255)),
+									onBlur: maxLen(255),
+									onSubmit: maxLen(255),
 								}}>
 								{(field) => (
 									<div>
@@ -507,12 +507,7 @@ export function RegisterForm({ onSuccess }: Props) {
 
 						{/* Region */}
 						<div className='mb-3'>
-							<form.Field
-								name='region'
-								validators={{
-									onBlur: ({ value }: { value: string }) => (!value ? "Region is required" : undefined),
-									onSubmit: ({ value }: { value: string }) => (!value ? "Region is required" : undefined),
-								}}>
+							<form.Field name='region'>
 								{(field) => (
 									<div>
 										<label
@@ -688,12 +683,7 @@ export function RegisterForm({ onSuccess }: Props) {
 
 						{/* Barangay */}
 						<div>
-							<form.Field
-								name='barangay'
-								validators={{
-									onBlur: ({ value }: { value: string }) => (!value ? "Barangay is required" : undefined),
-									onSubmit: ({ value }: { value: string }) => (!value ? "Barangay is required" : undefined),
-								}}>
+							<form.Field name='barangay'>
 								{(field) => (
 									<div>
 										<label
