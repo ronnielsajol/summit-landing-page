@@ -141,7 +141,7 @@ export function RegisterForm({ onSuccess }: Props) {
 				if (value.region) body.append("region", value.region);
 				if (value.profile_image) body.append("profile_image", value.profile_image);
 				body.append("additional_details", JSON.stringify([value.additional_details]));
-				const res = await fetch(`${apiUrl}/pre-register/${process.env.NEXT_PUBLIC_EVENT_ID}`, {
+				const res = await fetch(`${apiUrl}/register/${process.env.NEXT_PUBLIC_EVENT_ID}/check-in`, {
 					method: "POST",
 					headers: { Accept: "application/json" },
 					body,
