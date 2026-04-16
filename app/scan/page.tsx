@@ -49,7 +49,7 @@ function ScanPageContent() {
 
 			mutate(token, {
 				onSuccess: (data) => {
-					toast.success(data.message);
+					toast.success(`${data.user?.first_name} checked in successfully!`);
 				},
 				onError: (error: unknown) => {
 					const message = error instanceof Error ? error.message : "An error occurred while scanning.";
